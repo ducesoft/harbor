@@ -13,3 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ducesoft.harbor.services;
+
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
+
+/**
+ * @author coyzeng@gmail.com
+ */
+public interface HarborProjectService {
+
+    static HarborProjectService getInstance(@NotNull Project project) {
+        return ServiceManager.getService(project, HarborProjectService.class);
+    }
+
+    Project getProject();
+
+    ConsoleView getConsole();
+}

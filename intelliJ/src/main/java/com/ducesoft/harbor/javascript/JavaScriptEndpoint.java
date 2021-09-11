@@ -13,3 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ducesoft.harbor.javascript;
+
+/**
+ * @author coyzeng@gmail.com
+ */
+public class JavaScriptEndpoint implements ScriptEndpoint {
+
+    @Override
+    public Object invoke(String input) {
+        return null;
+    }
+
+}

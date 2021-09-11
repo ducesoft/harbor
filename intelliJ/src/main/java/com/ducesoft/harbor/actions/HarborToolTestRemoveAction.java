@@ -13,3 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ducesoft.harbor.actions;
+
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+
+/**
+ * @author coyzeng@gmail.com
+ */
+public class HarborToolTestRemoveAction extends AnAction {
+
+    @Override
+    public void actionPerformed(AnActionEvent e) {
+        // TODO: insert action logic here
+    }
+}

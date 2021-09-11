@@ -1,0 +1,46 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceInterface="com.ducesoft.harbor.services.HarborApplicationService"
+                            serviceImplementation="com.ducesoft.harbor.services.HarborApplicationServiceImplement"/>
+        <projectService serviceInterface="com.ducesoft.harbor.services.HarborProjectService"
+                        serviceImplementation="com.ducesoft.harbor.services.HarborProjectServiceImplement"/>
+        <toolWindow id="harborToolWindowFactory" canCloseContents="true" icon="HarborIcons.ICON" anchor="bottom"
+                    factoryClass="com.ducesoft.harbor.window.HarborToolWindowFactory"/>
+    </extensions>
+
+    <applicationListeners>
+        <listener class="com.ducesoft.harbor.listeners.HarborProjectManagerListener"
+                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
+    </applicationListeners>
+
+    <actions>
+        <action id="harborProjectViewPopupToolAction" class="com.ducesoft.harbor.actions.HarborProjectViewPopupToolAction"
+                popup="true" text="Harbor Home" description="HarborHome" icon="HarborIcons.ICON">
+            <keyboard-shortcut keymap="$default" first-keystroke="shift meta T"/>
+            <add-to-group group-id="MainToolBar" anchor="last"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="ChangesViewPopupMenu" anchor="last"/>
+        </action>
+        <action id="harborProjectViewPopupRunAction" class="com.ducesoft.harbor.actions.HarborProjectViewPopupRunAction"
+                popup="true" text="Harbor Home" description="HarborHome" icon="HarborIcons.RUN">
+            <add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="last"/>
+        </action>
+        <action id="harborProjectViewPopupDebugAction" class="com.ducesoft.harbor.actions.HarborProjectViewPopupDebugAction"
+                popup="true" text="Open Harbor" description="OpenHarbor" icon="HarborIcons.DEBUG">
+            <add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="last"/>
+        </action>
+        <action id="harborEditorViewPopupAction" class="com.ducesoft.harbor.actions.HarborEditorViewPopupAction" popup="true"
+                text="Harbor Home" description="HarborHome" icon="HarborIcons.ICON">
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </action>
+        <action id="harborToolTestCreateAction" class="com.ducesoft.harbor.actions.HarborToolTestCreateAction"
+                description="OpenHarborHome" icon="HarborIcons.CREATE">
+        </action>
+        <action id="harborToolTestCopyAction" class="com.ducesoft.harbor.actions.HarborToolTestCopyAction"
+                description="SyncHarborHome" icon="HarborIcons.COPY">
+        </action>
+        <action id="harborToolTestRemoveAction" class="com.ducesoft.harbor.actions.HarborToolTestRemoveAction"
+                description="BindHarborHome" icon="HarborIcons.REMOVE">
+        </action>
+    </actions>
+</idea-plugin>

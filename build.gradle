@@ -1,0 +1,206 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        //maven { url 'https://nexus.ducesoft.com/nexus/content/groups/public/' }
+        mavenCentral()
+        jcenter()
+        maven { url 'https://repo1.maven.org/maven2/' }
+        maven { url 'https://repo.spring.io/snapshot' }
+        maven { url 'https://repo.spring.io/release' }
+        maven { url 'https://repo.spring.io/milestone' }
+        maven { url 'https://repo.spring.io/libs-snapshot' }
+        maven { url 'https://repo.spring.io/libs-release' }
+        maven { url 'https://repo.spring.io/plugins-snapshot' }
+        maven { url 'https://repo.spring.io/plugins-release' }
+        maven { url 'https://repo.gradle.org/gradle/libs-snapshots' }
+        maven { url 'https://repo.gradle.org/gradle/libs-releases' }
+        maven { url 'https://plugins.gradle.org/m2' }
+    }
+    dependencies {
+        classpath("org.projectlombok:lombok:${lombokVersion}")
+        classpath("io.spring.gradle:dependency-management-plugin:${springGradlePluginVersion}")
+    }
+}
+
+plugins {
+    id 'scala'
+    id 'groovy'
+    id 'java'
+    id 'maven'
+    id 'java-library'
+    id 'application'
+    id 'io.spring.dependency-management' version "${springGradlePluginVersion}"
+    id 'org.jetbrains.gradle.plugin.idea-ext' version "${gradleIdeaPluginVersion}"
+    //id 'org.springframework.boot'
+}
+
+apply plugin: 'org.jetbrains.gradle.plugin.idea-ext'
+idea {
+    project {
+        settings {
+            compiler {
+                javac {
+                    javacAdditionalOptions "-parameters"
+                }
+            }
+        }
+    }
+}
+
+allprojects {
+    group = "${venusGroup}"
+    version = "${venusVersion}"
+    buildDir = 'target'
+
+    apply plugin: 'scala'
+    apply plugin: 'groovy'
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'java-library'
+    apply plugin: 'io.spring.dependency-management'
+
+    java {
+        modularity.inferModulePath = true
+        sourceCompatibility = JavaVersion.VERSION_15
+        targetCompatibility = JavaVersion.VERSION_15
+        withJavadocJar()
+        withSourcesJar()
+    }
+
+    idea {
+        module {
+            downloadJavadoc = false
+            downloadSources = true
+        }
+    }
+
+    repositories {
+        mavenLocal()
+        //maven { url 'https://nexus.ducesoft.com/nexus/content/groups/public/' }
+        mavenCentral()
+        jcenter()
+        maven { url 'https://repo1.maven.org/maven2/' }
+        maven { url 'https://repo.spring.io/snapshot' }
+        maven { url 'https://repo.spring.io/release' }
+        maven { url 'https://repo.spring.io/milestone' }
+        maven { url 'https://repo.spring.io/libs-snapshot' }
+        maven { url 'https://repo.spring.io/libs-release' }
+        maven { url 'https://repo.spring.io/plugins-snapshot' }
+        maven { url 'https://repo.spring.io/plugins-release' }
+        maven { url 'https://repo.gradle.org/gradle/libs-snapshots' }
+        maven { url 'https://repo.gradle.org/gradle/libs-releases' }
+        maven { url 'https://plugins.gradle.org/m2' }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom 'io.spring.platform:platform-bom:Cairo-RELEASE'
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+        }
+        dependencies {
+            dependencySet("org.springframework:${springVersion}") {
+                entry("spring-context")
+                entry("spring-tx")
+            }
+            dependency 'org.javassist:javassist:3.25.0-GA'
+            dependency 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.1'
+        }
+    }
+
+    dependencies {
+        compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        compileOnly "org.slf4j:slf4j-api:${slf4jVersion}"
+        implementation "org.scala-lang:scala-library:${scalaVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    }
+
+    configurations {
+        provided {
+            description = 'Non-exported compile-time dependencies.'
+        }
+        configurations {
+            all*.exclude group: 'commons-logging', module: 'commons-logging'
+            all*.exclude group: 'log4j'
+            all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+            all*.exclude module: 'spring-boot-starter-tomcat'
+            all*.exclude module: 'javax.annotation-api'
+        }
+        resources { description = 'share resources.' }
+    }
+
+    task createDirs {
+        doLast {
+            sourceSets*.java.srcDirs*.each { it.mkdirs() }
+            sourceSets*.resources.srcDirs*.each { it.mkdirs() }
+        }
+    }
+
+    task zip(type: Zip) {
+        from('script') { into('bin') }
+        from('src/main/resources') { into('conf') }
+        into('lib') {
+            from('lib')
+            from(jar.outputs.files)
+            from(configurations.compile)
+        }
+    }
+
+    tasks.withType(War) {
+        manifest {
+            attributes('Implementation-Title': project.name,
+                    'Implementation-Version': project.version,
+                    'Built-By': System.getProperty('user.name'),
+                    'Built-JDK': System.getProperty('java.version'),
+                    'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            )
+        }
+    }
+
+    tasks.withType(Jar) {
+        manifest {
+            attributes('Implementation-Title': project.name,
+                    'Implementation-Version': project.version,
+                    'Built-By': System.getProperty('user.name'),
+                    'Built-JDK': System.getProperty('java.version'),
+                    'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            )
+        }
+    }
+
+    tasks.withType(GroovyCompile) {
+        groovyOptions.encoding = 'MacRoman'
+        options.compilerArgs << '-parameters'
+    }
+
+    tasks.withType(Javadoc) {
+        options.encoding = "${sourceEncoding}"
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', "${sourceEncoding}")
+        options.addStringOption('charSet', "${sourceEncoding}")
+    }
+
+    tasks.withType(JavaCompile) {
+        options.fork = true
+        options.incremental = true
+        options.encoding = "${sourceEncoding}"
+        options.compilerArgs << '-parameters'
+        options.compilerArgs << '-Xlint:deprecation'
+        options.compilerArgs << '-Xlint:unchecked'
+        options.compilerArgs << '-nowarn'
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: 'http://nexus.ducesoft.com/nexus/content/repositories/releases/') {
+                    authentication(userName: mvnUser, password: mvnPasswd)
+                }
+                snapshotRepository(url: 'http://nexus.ducesoft.com/nexus/content/repositories/snapshots/') {
+                    authentication(userName: mvnUser, password: mvnPasswd)
+                }
+            }
+        }
+    }
+
+    [compileJava, compileTestJava]*.options*.encoding = "${sourceEncoding}"
+}

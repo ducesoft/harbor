@@ -13,3 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ducesoft.harbor.services;
+
+import com.intellij.openapi.components.ServiceManager;
+
+/**
+ * @author coyzeng@gmail.com
+ */
+public interface HarborApplicationService {
+    static HarborApplicationService getInstance() {
+        return ServiceManager.getService(HarborApplicationService.class);
+    }
+}

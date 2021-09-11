@@ -1,0 +1,18 @@
+<idea-plugin>
+    <!-- Product and plugin compatibility requirements -->
+    <!-- https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html -->
+    <id>com.ducesoft.harbor.plugin</id>
+    <name>Harbor</name>
+    <version>1.0.0</version>
+    <category>Tools</category>
+    <description>Ducesoft harbor. Tools for developer to save network workspace profile security.</description>
+    <change-notes>Harbor 1.0 release of the plugin. Features: Binding jetbrains plugin graph、workspace profiles with harbor cloud account.</change-notes>
+    <vendor url="https://ducesoft.com" email="coyzeng@ducesoft.com">Ducesoft Inc.</vendor>
+    <resource-bundle>messages.HarborBundle</resource-bundle>
+    <depends optional="true" config-file="META-INF/harbor.xml">com.intellij.modules.java</depends>
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.vcs</depends>
+    <depends>com.intellij.modules.xml</depends>
+    <depends>com.intellij.modules.xdebugger</depends>
+</idea-plugin>
